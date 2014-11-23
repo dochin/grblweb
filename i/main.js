@@ -211,7 +211,18 @@ $(document).ready(function() {
 			e.preventDefault();
 			$('#zM').click();
 			break;
+//jgc: add spacebar pause function
+		case 32:
+			// spacebar pause
+			e.preventDefault();
+			$('#pause').click();
+			break;
 		}
+	});
+
+//JGC: Added return to home button
+	$('#goToZero').on('click', function() {
+		socket.emit('gcodeLine', { line: 'M2\nG90 X0 Y0 Z0\n'});
 	});
 
 	// handle gcode uploads
