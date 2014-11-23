@@ -49,7 +49,7 @@ npm install
 
 ## Config
 
-edit config.js to change serial baud rate and web port
+edit config.js to change serial baud rate, web port, and installed location
 
 ## Running
 
