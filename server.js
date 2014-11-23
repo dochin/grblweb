@@ -37,7 +37,8 @@ var url = require('url');
 var qs = require('querystring');
 
 app.listen(config.webPort);
-var fileServer = new static.Server('./i');
+//JGC: Use abs path from config.js
+var fileServer = new static.Server(config.installedPath + '/i'); 
 
 function handler (req, res) {
 
@@ -233,6 +234,7 @@ function sendFirstQ(port) {
 	sp[port].handle.write(t+"\n")
 	sp[port].lastSerialWrite.push(t);
 }
+
 
 var queuePause = 0;
 io.sockets.on('connection', function (socket) {
