@@ -222,7 +222,7 @@ $(document).ready(function() {
 
 //JGC: Added return to home button
 	$('#goToZero').on('click', function() {
-		socket.emit('gcodeLine', { line: 'M2\nG90 X0 Y0 Z0\n'});
+		socket.emit('gcodeLine', { line: 'G21\nG91 G0 Z10\nG90 G0 X0 Y0\nG90 G0 Z0\n'});
 	});
 
 	// handle gcode uploads
