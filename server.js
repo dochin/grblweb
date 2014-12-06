@@ -37,8 +37,7 @@ var url = require('url');
 var qs = require('querystring');
 
 app.listen(config.webPort);
-//JGC: Use abs path from config.js
-var fileServer = new static.Server(config.installedPath + '/i'); 
+var fileServer = new static.Server('./i'); 
 
 function handler (req, res) {
 
