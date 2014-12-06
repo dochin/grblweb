@@ -1,12 +1,11 @@
 #!/bin/sh
 #
-# An init.d script for running a Node.js process as a service using Forever as
+# An init.d script for running grblweb as a service using Forever as
 # the process monitor. For more configuration options associated with Forever,
 # see: https://github.com/nodejitsu/forever
 #
-# This was written for Debian distributions such as Ubuntu, but should still
-# work on RedHat, Fedora, or other RPM-based distributions, since none of the
-# built-in service functions are used. So information is provided for both.
+# This was written for Debian, but may work on other distributions.  
+# So, use at your own risk.
 #
 ### BEGIN INIT INFO
 # Provides:             grblweb
@@ -29,41 +28,32 @@
 # https://gist.github.com/3748766
 # https://github.com/hectorcorrea/hectorcorrea.com/blob/master/etc/forever-initd-hectorcorrea.sh
 # https://www.exratione.com/2011/07/running-a-nodejs-server-as-a-service-using-forever/
-#
-# The example environment variables below assume that Node.js is installed by
-# building from source with the standard settings.
-#
-# It should be easy enough to adapt to the paths to be appropriate to a package
-# installation, but note that the packages available in the default repositories
-# are far behind the times. Most users will be building from source to get a
-# suitably recent Node.js version.
-#
-# An application name to display in echo text.
-# NAME="My Application"
-# The full path to the directory containing the node and forever binaries.
-# NODE_BIN_DIR="/usr/local/node/bin"
-# Set the NODE_PATH to the Node.js main node_modules directory.
-# NODE_PATH="/usr/local/lib/node_modules"
-# The application startup Javascript file path.
-# APPLICATION_PATH="/home/user/my-application/start-my-application.js"
-# Process ID file path.
-# PIDFILE="/var/run/my-application.pid"
-# Log file path.
-# LOGFILE="/var/log/my-application.log"
-# Forever settings to prevent the application spinning if it fails on launch.
-# MIN_UPTIME="5000"
-# SPIN_SLEEP_TIME="2000"
- 
+
+#-------SETTINGS--------
+
+#UID for forever to identify the script
 NAME="grblweb"
+
+#The path where node binaries and node modules are installed
 NODE_BIN_DIR="/usr/bin"
 NODE_PATH="/usr/lib/node_modules"
+
+#The path where grblweb is installed and the name of the grblweb server script
 APPLICATION_PATH="/usr/lib/node_modules/grblweb"
 APPLICATION_SCRIPT="server.js"
+
+#System user account that will run the daemon.  This user has to have a home directory and shell access
 RUN_USER="mill"
+
+#PID and log file.  For a normal node.js installation these will end up in ~/.forever/pid and ~/.forever.  By default these will use the process UID
 PIDFILE="$NAME.pid"
 LOGFILE="$NAME.log"
+
+#See forever documentation for details.
 MIN_UPTIME="5000"
 SPIN_SLEEP_TIME="2000"
+
+#---------------------
  
 # Add node to the path for situations in which the environment is passed.
 PATH=$NODE_BIN_DIR:$PATH
@@ -92,33 +82,44 @@ start() {
     #
     # Note that redirecting the output to /dev/null (or anywhere) is necessary
     # to make this script work if provisioning the service via Chef.
-if [ "$RUN_USER" = "$USER" ]; then
 
-    $NODE_BIN_DIR/forever \
-      --pidFile $PIDFILE \
-      -a \
-      -l $LOGFILE \
-      --minUptime $MIN_UPTIME \
-      --spinSleepTime $SPIN_SLEEP_TIME \
-      --sourceDir $APPLICATION_PATH \
-      --workingDir $APPLICATION_PATH \
-      --uid "$NAME" \
-      start $APPLICATION_SCRIPT 2>&1 > /dev/null &
-    RETVAL=$?
-
+#First, check to see if grblweb is already running.
+if [ "$USER" = "$RUN_USER" ]; then
+	echo `forever list` | grep -q "$NAME"
 else
-    su -c "$NODE_BIN_DIR/forever \
-      --pidFile $PIDFILE \
-      -a \
-      -l $LOGFILE \
-      --minUptime $MIN_UPTIME \
-      --spinSleepTime $SPIN_SLEEP_TIME \
-      --sourceDir $APPLICATION_PATH \
-      --workingDir $APPLICATION_PATH \
-      --uid "$NAME" \
-      start $APPLICATION_SCRIPT 2>&1 > /dev/null &" \
-      $RUN_USER
-    RETVAL=$?
+        su -c "echo \`forever list\` | grep -q \"$NAME\"" $RUN_USER	
+fi
+if [ "$?" -eq "0" ]; then
+	echo "grblweb is already running."
+	RETVAL=1
+else	
+	if [ "$RUN_USER" = "$USER" ]; then
+	
+	    $NODE_BIN_DIR/forever \
+	      --pidFile $PIDFILE \
+	      -a \
+	      -l $LOGFILE \
+	      --minUptime $MIN_UPTIME \
+	      --spinSleepTime $SPIN_SLEEP_TIME \
+	      --sourceDir $APPLICATION_PATH \
+	      --workingDir $APPLICATION_PATH \
+	      --uid "$NAME" \
+	      start $APPLICATION_SCRIPT 2>&1 > /dev/null &
+	    RETVAL=$?
+	else
+	    su -c "$NODE_BIN_DIR/forever \
+	      --pidFile $PIDFILE \
+	      -a \
+	      -l $LOGFILE \
+	      --minUptime $MIN_UPTIME \
+	      --spinSleepTime $SPIN_SLEEP_TIME \
+	      --sourceDir $APPLICATION_PATH \
+	      --workingDir $APPLICATION_PATH \
+	      --uid "$NAME" \
+	      start $APPLICATION_SCRIPT 2>&1 > /dev/null &" \
+	      $RUN_USER
+	    RETVAL=$?
+	fi
 fi
 }
 
@@ -162,18 +163,6 @@ restart() {
 }
  
 status() {
-    # On Ubuntu this isn't even necessary. To find out whether the service is
-    # running, use "service my-application status" which bypasses this script
-    # entirely provided you used the service utility to start the process.
-    #
-    # The commented line below is the obvious way of checking whether or not a
-    # process is currently running via Forever, but in recent Forever versions
-    # when the service is started during Chef provisioning a dead pipe is left
-    # behind somewhere and that causes an EPIPE exception to be thrown.
-    # forever list | grep -q "$APPLICATION_PATH"
-    #
-    # So instead we add an extra layer of indirection with this to bypass that
-    # issue.
     if [ "$USER" = "$RUN_USER" ]; then
         echo `forever list` | grep -q "$NAME"
     else

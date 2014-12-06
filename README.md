@@ -77,3 +77,29 @@ Read http://www.hobbytronics.co.uk/raspberry-pi-serial-port
 Set config.usettyAMA0 to 1 in config.js
 
 This is already enabled on the prebuilt GRBLWeb Raspbian image.
+
+## Run as a daemon (service)
+
+A script to run grblweb as a daemon using forever on Debian is included.
+The following commands can be used to start/stop/check status of the daemon:
+
+	./grblweb-daemon start
+	./grblweb-daemon stop
+	./grblweb-daemon status
+
+Before you run the script, edit it to match your system.  Make sure the node.js
+install path, node_modules path, and system user account to run the daemon are
+what you want.  
+
+IMPORTANT: The system user account in the script has to exist
+and have a home directory to store pid and log files.
+
+To install grblweb as a service to run automatically when the system boots,
+Copy grblweb-daemon to /etc/init.d/, then use update-rc.d to update system
+services:
+
+	sudo cp ./grblweb-daemon /etc/init.d
+	sudo update-rc.d grblweb-daemon defaults
+
+When you reboot your system, grblweb should start automatically.
+
