@@ -1,7 +1,7 @@
 /*
 
     GRBLWeb - a web based CNC controller for GRBL
-    Copyright (C) 2014 Andrew Hodel
+    Copyright (C) 2014, 2015 Andrew Hodel, Jason Campbell
 
     THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
     WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
@@ -320,7 +320,7 @@ io.sockets.on('connection', function (socket) {
 				queuePause = 1;
 
 				//JGC: GRBL looks for "!" and executes a pause immediately
-	            sp[currentSocketPort[socket.id]].handle.write("\041");	
+				sp[currentSocketPort[socket.id]].handle.write("\041");	
 				emitToPortSockets(currentSocketPort[socket.id], 'serialRead', {'line':'<span style="color: purple;">NOTICE:</span> Pausing machine operation.\n'});	
 			} else {
 				socket.emit('serverError', 'you must select a serial port');
@@ -336,8 +336,8 @@ io.sockets.on('connection', function (socket) {
 				queuePause = 0;
 
 				//JGC: "~" is the GRBL unpause command
-            	sp[currentSocketPort[socket.id]].handle.write("\176");
-	            emitToPortSockets(currentSocketPort[socket.id], 'serialRead', {line:'<span style="color: purple;">NOTICE:</span> Resuming machine operation.\n'});	
+				sp[currentSocketPort[socket.id]].handle.write("\176");
+            			emitToPortSockets(currentSocketPort[socket.id], 'serialRead', {line:'<span style="color: purple;">NOTICE:</span> Resuming machine operation.\n'});	
 		  		sendFirstQ(currentSocketPort[socket.id]);	
 		  	} else {
 				socket.emit('serverError', 'you must select a serial port');
