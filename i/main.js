@@ -152,23 +152,24 @@ $(document).ready(function() {
 		}
 	});
 
+//JGC Modified these to ensure coordinates are in mm (added G21)
 	$('#xM').on('click', function() {
-		socket.emit('gcodeLine', { line: 'G91\nG1 F'+$('#jogSpeed').val()+' X-'+$('#jogSize').val()+'\nG90'});
+		socket.emit('gcodeLine', { line: 'G21\nG91\nG1 F'+$('#jogSpeed').val()+' X-'+$('#jogSize').val()+'\nG90'});
 	});
 	$('#xP').on('click', function() {
-		socket.emit('gcodeLine', { line: 'G91\nG1 F'+$('#jogSpeed').val()+' X'+$('#jogSize').val()+'\nG90'});
+		socket.emit('gcodeLine', { line: 'G21\nG91\nG1 F'+$('#jogSpeed').val()+' X'+$('#jogSize').val()+'\nG90'});
 	});
 	$('#yP').on('click', function() {
-		socket.emit('gcodeLine', { line: 'G91\nG1 F'+$('#jogSpeed').val()+' Y'+$('#jogSize').val()+'\nG90'});
+		socket.emit('gcodeLine', { line: 'G21\nG91\nG1 F'+$('#jogSpeed').val()+' Y'+$('#jogSize').val()+'\nG90'});
 	});
 	$('#yM').on('click', function() {
-		socket.emit('gcodeLine', { line: 'G91\nG1 F'+$('#jogSpeed').val()+' Y-'+$('#jogSize').val()+'\nG90'});
+		socket.emit('gcodeLine', { line: 'G21\nG91\nG1 F'+$('#jogSpeed').val()+' Y-'+$('#jogSize').val()+'\nG90'});
 	});
 	$('#zP').on('click', function() {
-		socket.emit('gcodeLine', { line: 'G91\nG1 F'+$('#jogSpeed').val()+' Z'+$('#jogSize').val()+'\nG90'});
+		socket.emit('gcodeLine', { line: 'G21\nG91\nG1 F'+$('#jogSpeed').val()+' Z'+$('#jogSize').val()+'\nG90'});
 	});
 	$('#zM').on('click', function() {
-		socket.emit('gcodeLine', { line: 'G91\nG1 F'+$('#jogSpeed').val()+' Z-'+$('#jogSize').val()+'\nG90'});
+		socket.emit('gcodeLine', { line: 'G21\nG91\nG1 F'+$('#jogSpeed').val()+' Z-'+$('#jogSize').val()+'\nG90'});
 	});
 
 	// WASD and up/down keys
