@@ -108,7 +108,8 @@ $(document).ready(function() {
 			gcY = Math.round(gcY*$('#jogSize').val()*1000)/1000;
 
 			// gcode to send
-			socket.emit('gcodeLine', { line: 'G91\nG0 F'+fSpeed+' X'+gcX+' Y'+gcY+'\nG90\n'});
+			//JGC Added G21 to make sure it's in mm instead of inches."
+			socket.emit('gcodeLine', { line: 'G21\nG91\nG0 F'+fSpeed+' X'+gcX+' Y'+gcY+'\nG90\n'});
 		}
 	}, 200);
 
