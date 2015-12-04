@@ -20,12 +20,7 @@ If you would like to include this code in a project which is not licensed under 
 
 ## Raspberry Pi prebuilt Image
 
-There is a prebuilt Rasbian image with GRBLWeb already running on it at port 80 for 9600 baud GRBL devices.  More information and a link to the .img can be found at http://xyzbots.com
-
-The ethernet interface will get a DHCP address that you can ssh to.
-
-username: pi
-password: raspbian
+There is a prebuilt Raspberry Pi Image that is fully configured.  More information and a link to the .img can be found at http://xyzbots.com
 
 ## GRBL v.8 vs v.9 and baud rate
 
